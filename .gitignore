@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory (if you add tests later)
+coverage/
+
+# Optional: ignore local dev files
+preview-server.js
+test.js
+plan.md
+.claude/

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - TimeLog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="/css/main.css" rel="stylesheet">
+  <link href="/css/calendar.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <a href="/dashboard" class="logo">
+        <div class="logo-mark">T</div>
+        Time<em>Log</em>
+      </a>
+    </div>
+
+    <div class="sidebar-body">
+      <a href="/dashboard" class="nav-item active">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6">
+          <rect x="3" y="3" width="6" height="6" rx="1.5"/>
+          <rect x="11" y="3" width="6" height="6" rx="1.5"/>
+          <rect x="3" y="11" width="6" height="6" rx="1.5"/>
+          <rect x="11" y="11" width="6" height="6" rx="1.5"/>
+        </svg>
+        Dashboard
+      </a>
+      <a href="/summary" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M3 14l4-4 4 3 4-6"/>
+          <path d="M3 17h14" stroke-linecap="round"/>
+        </svg>
+        Summary
+      </a>
+
+      <div class="sidebar-section">
+        <p class="section-label">Tags</p>
+        <div id="tagList"></div>
+        <button class="btn-add-tag" onclick="openTagModal()">
+          <span style="font-size:16px;line-height:1">+</span> New tag
+        </button>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-row">
+        <div class="user-avatar" id="userAvatar">J</div>
+        <div class="user-info">
+          <div class="user-name" id="userName"><%= typeof user !== 'undefined' ? user.name : 'User' %></div>
+          <div class="user-role">Free plan</div>
+        </div>
+        <form method="POST" action="/auth/logout">
+          <button type="submit" class="btn-signout" title="Sign out">↪</button>
+        </form>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="topbar-date" id="topbarDate"></span>
+      </div>
+      <div class="topbar-right">
+        <div class="shortcut-badge"><span class="kbd">N</span> new entry</div>
+        <button class="btn-new" onclick="openLogModal()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M7 1v12M1 7h12"/>
+          </svg>
+          New entry
+        </button>
+      </div>
+    </div>
+
+    <div class="cal-wrap">
+      <div id="calendar"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Log modal -->
+<div class="overlay" id="logOverlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title" id="logTitle">New entry</span>
+      <button class="modal-close" onclick="closeLogModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="logId">
+      <div class="field">
+        <label class="field-label" for="entryTitle">Title</label>
+        <input class="input" type="text" id="entryTitle" placeholder="What did you work on?" required>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label" for="logStart">Start</label>
+          <input class="input" type="datetime-local" id="logStart" required oninput="calcDuration()">
+        </div>
+        <div class="field">
+          <label class="field-label" for="logEnd">End</label>
+          <input class="input" type="datetime-local" id="logEnd" required oninput="calcDuration()">
+        </div>
+      </div>
+      <div class="duration-row">
+        <span class="duration-badge" id="durationBadge"></span>
+      </div>
+      <div class="field">
+        <label class="field-label" for="logTag">Tag</label>
+        <select class="input" id="logTag">
+          <option value="">No tag</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="field-label" for="logNotes">Notes</label>
+        <textarea class="input" id="logNotes" placeholder="Optional notes…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-danger-ghost" id="logDelBtn" onclick="deleteLog()" style="display:none">Delete</button>
+      <button class="btn-ghost" onclick="closeLogModal()">Cancel</button>
+      <button class="btn-primary" onclick="submitLog()" id="logSaveBtn">Save entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- Tag modal -->
+<div class="overlay" id="tagOverlay">
+  <div class="modal modal-sm">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title">New tag</span>
+      <button class="modal-close" onclick="closeTagModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label class="field-label" for="tagName">Tag name</label>
+        <input class="input" type="text" id="tagName" placeholder="e.g. Deep Work" required>
+      </div>
+      <div class="field">
+        <label class="field-label">Color</label>
+        <div class="swatches" id="swatches"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeTagModal()">Cancel</button>
+      <button class="btn-primary" onclick="submitTag()">Create tag</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>
