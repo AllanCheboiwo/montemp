@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { CalendarRange, BarChart3, Plus, LogOut } from 'lucide-react'
 import {
   Sidebar,
@@ -11,7 +11,6 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
@@ -25,17 +24,8 @@ export function AppSidebar() {
   const { pathname } = useLocation()
   const user = useStore((s) => s.user)
   const tags = useStore((s) => s.tags)
-  const events = useStore((s) => s.events)
   const logout = useStore((s) => s.logout)
   const [tagOpen, setTagOpen] = useState(false)
-
-  const eventCountByTag = useMemo(() => {
-    const c = {}
-    events.forEach((ev) => {
-      c[ev.tagId] = (c[ev.tagId] || 0) + 1
-    })
-    return c
-  }, [events])
 
   const initials = (user?.name || 'U')
     .split(' ')
@@ -101,7 +91,6 @@ export function AppSidebar() {
                       <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: tag.color }} />
                       <span className="truncate">{tag.name}</span>
                     </SidebarMenuButton>
-                    <SidebarMenuBadge>{eventCountByTag[tag.id] || 0}</SidebarMenuBadge>
                   </SidebarMenuItem>
                 ))}
               </SidebarMenu>
