@@ -119,10 +119,6 @@ export function EventModal({ open, onOpenChange, seed }) {
               <SelectContent>
                 {tags.map((t) => (
                   <SelectItem key={t.id} value={t.id}>
-                    <span
-                      className="mr-2 inline-block h-2 w-2 rounded-full align-middle"
-                      style={{ backgroundColor: t.color }}
-                    />
                     {t.name}
                   </SelectItem>
                 ))}
