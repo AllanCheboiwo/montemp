@@ -1,11 +1,11 @@
-const { pool } = require('./pool'); // adjust path as needed
+const pool = require('./pool'); // adjust path as needed
 
 exports.createTables = async () => {
     const client = await pool.connect();
     try {
         await client.query('BEGIN');
         
-        // Users table
+  
         await client.query(`
             CREATE TABLE IF NOT EXISTS users (
                 id SERIAL PRIMARY KEY,
@@ -16,7 +16,7 @@ exports.createTables = async () => {
             );
         `);
         
-        // Tags table
+
         await client.query(`
             CREATE TABLE IF NOT EXISTS tags (
                 id SERIAL PRIMARY KEY,
@@ -27,7 +27,7 @@ exports.createTables = async () => {
             );
         `);
         
-        // Time logs table
+
         await client.query(`
             CREATE TABLE IF NOT EXISTS time_logs (
                 id SERIAL PRIMARY KEY,
@@ -43,7 +43,7 @@ exports.createTables = async () => {
         `);
         
         
-        // Indexes
+
         await client.query(`CREATE INDEX IF NOT EXISTS idx_time_logs_user_id ON time_logs(user_id);`);
         await client.query(`CREATE INDEX IF NOT EXISTS idx_time_logs_tag_id ON time_logs(tag_id);`);
         await client.query(`CREATE INDEX IF NOT EXISTS idx_time_logs_start_time ON time_logs(start_time);`);
