@@ -33,6 +33,9 @@ frontend/next-env.d.ts
 
 # Optional: ignore local dev files
 test.js
-plan.md
 .claude/
 .github/
+
+# Markdown (except README)
+*.md
+!README.md
