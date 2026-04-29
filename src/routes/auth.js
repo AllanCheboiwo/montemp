@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const validator = require('validator');
 
-router.post('/auth/register',async (req,res,next)=>{
+router.post('/signup',async (req,res,next)=>{
     try{
     
         const {email,password,name} = req.body;
@@ -47,10 +47,14 @@ router.post('/auth/register',async (req,res,next)=>{
     }
 
 });
-router.post('/auth/login', async (req,res,next)=>{
+router.post('/login', async (req,res,next)=>{
     
     try{
         const {email,password} = req.body;
+
+        if(!email || !password){
+            return res.status(400).json({error: 'Email and password are required'});
+        }
 
         const {rows} = await pool.query(`
             SELECT id,email,password_hash,name
@@ -72,10 +76,10 @@ router.post('/auth/login', async (req,res,next)=>{
         res.cookie('token',token,{
             httpOnly: true,
             secure: process.env.NODE_ENV==='production',
-            sameSite:'strict',
+            sameSite: process.env.NODE_ENV==='production' ? 'none' : 'strict',
             maxAge: 3600000
         });
-        res.json({ message: 'Logged in' });
+        res.json({ message: 'Logged in', name:user.name});
 
     }
     catch(err){
@@ -84,18 +88,16 @@ router.post('/auth/login', async (req,res,next)=>{
     }
 });
 
-router.post('/auth/logout', (req, res, next) => {
-    try {
-        res.clearCookie('token', {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict'
-        });
-        res.status(200).json({ message: 'Logged out successfully' });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Server error' });
-    }
+router.post('/logout', (req, res) => {
+
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict'
+    });
+    res.json({message: 'Logged Out'});   
+
+
 });
 
 

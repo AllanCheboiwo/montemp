@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken');
 
-function authenticate(res,req,next){
-    const token = res.cookies.token;
+function authenticate(req,res,next){
+    const token = req.cookies.token;
 
     if(!token){
-        res.status(401).json({error: "Access Denied. No valid token"});
+        return res.status(401).json({error: "Access Denied. No valid token"});
     }
 
     try{
@@ -12,8 +12,8 @@ function authenticate(res,req,next){
         req.user = decoded;
         next();
     }catch(err){
-        return res.status(403).json('Invalid or expired tokens');
+        return res.status(403).json({ error: 'Invalid or expired token' });
     }
-
-
 }
+
+module.exports = authenticate;
