@@ -30,7 +30,7 @@ export function EventModal({ open, onOpenChange, seed }) {
 
   const isEdit = seed?.mode === 'edit'
   const [title, setTitle] = useState('')
-  const [tagId, setTagId] = useState(tags[0]?.id || '')
+  const [tagId, setTagId] = useState('')
   const [dateStr, setDateStr] = useState('')
   const [startStr, setStartStr] = useState('')
   const [endStr, setEndStr] = useState('')
@@ -45,7 +45,7 @@ export function EventModal({ open, onOpenChange, seed }) {
       seed.mode === 'edit' ? seed.event.end : seed.end || new Date(seedStart.getTime() + 3600000)
 
     setTitle(seed.mode === 'edit' ? seed.event.title : '')
-    setTagId(seed.mode === 'edit' ? seed.event.tagId : tags[0]?.id || '')
+    setTagId(seed.mode === 'edit' ? seed.event.tagId : '')
     setDateStr(isoDateInput(seedStart))
     setStartStr(isoTimeInput(seedStart))
     setEndStr(isoTimeInput(seedEnd))
@@ -114,7 +114,7 @@ export function EventModal({ open, onOpenChange, seed }) {
             <Label htmlFor="ev-tag">Tag</Label>
             <Select value={tagId} onValueChange={setTagId}>
               <SelectTrigger id="ev-tag">
-                <SelectValue />
+                <SelectValue placeholder="Pick a tag" />
               </SelectTrigger>
               <SelectContent>
                 {tags.map((t) => (
