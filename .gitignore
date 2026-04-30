@@ -34,7 +34,14 @@ frontend/next-env.d.ts
 # Optional: ignore local dev files
 test.js
 .claude/
-.github/
+
+# Terraform
+infra/.terraform/
+infra/.terraform.lock.hcl
+infra/bootstrap.zip
+infra/terraform.tfvars
+infra/terraform.tfstate
+infra/terraform.tfstate.backup
 
 # Markdown (except README)
 *.md

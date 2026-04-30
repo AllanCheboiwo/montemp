@@ -33,12 +33,15 @@ app.use('/tags', tagsRoutes);
 const summaryRoutes = require('./routes/summary');
 app.use('/summary', summaryRoutes);
 
-app.listen(PORT,()=>{
-    console.log(`timelog server has started on port ${PORT}`);
-});
-
-
 if (process.env.NODE_ENV === 'development') {
     const { createTables } = require('./db/schema');
     createTables().catch(console.error);
 }
+
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`timelog server has started on port ${PORT}`);
+    });
+}
+
+module.exports = app;
